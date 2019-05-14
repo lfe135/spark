@@ -16,9 +16,9 @@ public class App5
     {
     	  Socket socket = new Socket("openbarrage.douyutv.com",8601);
 	      OutputStream outputStream = socket.getOutputStream();
-	      outputStream.write(App4.getSend("type@=loginreq/roomid@=99999/"));
+	    //  outputStream.write(App4.getSend("type@=loginreq/roomid@=99999/"));
 	      InputStream inputStream = socket.getInputStream();
-	      outputStream.write(App4.getSend("type@=joingroup/rid@=99999/gid@=-9999/"));
+	     // outputStream.write(App4.getSend("type@=joingroup/rid@=99999/gid@=-9999/"));
 	     // byte[] byte2=new byte[50];
 	      FileWriter fileWriter = new FileWriter("C:\\Users\\DELL\\1.txt");
 	      byte[] byte1=new byte[0];

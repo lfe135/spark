@@ -14,6 +14,7 @@ import scala.Tuple2;
 
 public class App6 {
 	public static void main(String[] args) throws InterruptedException {
+		System.setProperty("hadoop.home.dir","C:\\Users\\DELL\\Downloads\\hadoop-common-2.2.0-bin-master");
 		DouyuMessageReceiver douyuMessageReceiver = new DouyuMessageReceiver();
 		SparkConf conf = new SparkConf().setAppName("douyugift").setMaster("local[2]");
 		JavaStreamingContext context = new JavaStreamingContext(conf, Durations.seconds(30));
@@ -39,7 +40,7 @@ public class App6 {
 			return new Tuple2<String,Integer>(gfid,gfcnt*hits);
 		});
 		JavaPairDStream<String,Integer> gnc=nameAmount.reduceByKey((gc1,gc2)->gc1+gc2);
-		gnc.print(1000);
+		gnc.dstream().saveAsTextFiles("", "");;
 		context.start();
 		context.awaitTermination();
 		context.close();
