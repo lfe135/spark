@@ -53,16 +53,7 @@ public class App11 {
 		Dataset<Row> sum = result.sum("gfamo");
 		Dataset<Row> join = sum.join(json, sum.col("gfid").equalTo(json.col("gfid")),"left_outer");
 		Dataset<Row> withColumn = join.withColumn("sum", join.col("sum(gfamo)").multiply(join.col("pri")));
-		withColumn.cache();
 		Dataset<Row> select = withColumn.select(functions.sum("sum"));
-		StreamingQuery start2 = select
-				.writeStream()
-				.outputMode("complete")
-				//.option("path", "c:\\testfiles")
-				//.option("checkpointLocation", "c:\\testfiles")
-				.option("numRows",100)
-				.format("console")
-				.start();
 		StreamingQuery start = withColumn
 				.writeStream()
 				.outputMode("complete")
@@ -71,7 +62,6 @@ public class App11 {
 				.option("numRows",100)
 				.format("console")
 				.start();
-		start2.awaitTermination();
 		start.awaitTermination();
 		//100鱼丸 20000；超大丸星 20008；小飞蝶 1859 1；幸运钥匙 2096 0.2；弱鸡 20001 0.2；赞 20006 0.1
 		//药丸 	20011 0.1；幸运水晶 2095 0.1；幸运戒指 2097 0.5；偏爱 20382 1；
