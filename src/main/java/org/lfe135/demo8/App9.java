@@ -16,7 +16,7 @@ public class App9 {
 	public static void main(String[] args) throws StreamingQueryException {
 		System.setProperty("hadoop.home.dir", "C:\\Users\\DELL\\Downloads\\hadoop-common-2.2.0-bin-master");
 		SparkSession session = SparkSession.builder().appName("douyu").master("local").getOrCreate();
-		//session.sparkContext().setLogLevel("ERROR");
+		session.sparkContext().setLogLevel("ERROR");
 		Dataset<String> line = session.readStream().textFile("C:\\testfiles");
 		Dataset<String> lfds = line.filter((FilterFunction<String>)lin->lin.contains("type@=dgb/"));
 		Dataset<Gift> giftds = lfds.map((MapFunction<String,Gift>)lfd->{
@@ -42,7 +42,7 @@ public class App9 {
 		}, Encoders.bean(Gift.class));
 		KeyValueGroupedDataset<Long, Gift> giftidds = giftds.groupByKey((MapFunction<Gift,Long>)gif->gif.getGfid(), Encoders.LONG());
 		Dataset<Tuple2<Long, Long>> giftagg = giftidds.agg(typed.sumLong((MapFunction<Gift, Long>)gif->gif.getGfcnt()*gif.getHits()));
-		StreamingQuery start = giftagg.writeStream().outputMode("complete").format("console").start();
+		StreamingQuery start = giftagg.writeStream().outputMode("append").option("checkpointLocation", "c:\\testfiles") .option("path", "c:\\testfiles").format("json").start();
 		start.awaitTermination();
 	}
 }
