@@ -1,10 +1,7 @@
 package org.lfe135.demo8;
 
-import java.sql.Timestamp;
-
 import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.api.java.function.MapFunction;
-import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.RelationalGroupedDataset;
@@ -13,7 +10,6 @@ import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.functions;
 import org.apache.spark.sql.streaming.StreamingQuery;
 import org.apache.spark.sql.streaming.StreamingQueryException;
-import org.apache.spark.sql.types.StructType;
 
 import scala.Tuple2;
 
@@ -27,16 +23,16 @@ public class App11 {
 		//StructType schema=new StructType().add("name","string").add("gfid","long").add("pri","double");
 		Dataset<Row> json = session.read().json("C:\\testfiles\\test\\part-00000-104a83d4-14ad-47bb-8392-7bae7839d103-c000.json");
 		Dataset<String> timeLineFilted=line.filter((FilterFunction<String>)tli->{return tli.contains("type@=dgb/");});
-		Dataset<Tuple2<Long,Long>> gift=timeLineFilted.map((MapFunction<String,Tuple2<Long,Long>>)ts->{
+		Dataset<Tuple2<String,Long>> gift=timeLineFilted.map((MapFunction<String,Tuple2<String,Long>>)ts->{
 			String[] split = ts.split("/");
-			Long gfid=0L;
+			String gfid="";
 			Long gfcnt=1L;
 			Long hits=1L;
 			for(String string:split) {
 				String[] split2 = string.split("@=");
 				switch(split2[0]) {
 					case "gfid":
-						if(split2.length>1) gfid=Long.parseLong(split2[1]);
+						if(split2.length>1) gfid=split2[1];
 						break;
 					case "gfcnt":
 						if(split2.length>1) gfcnt=Long.parseLong(split2[1]);
@@ -46,8 +42,8 @@ public class App11 {
 						break;
 				}
 			}
-			return new Tuple2<Long,Long>(gfid,gfcnt*hits);
-		}, Encoders.tuple(Encoders.LONG(),Encoders.LONG()));
+			return new Tuple2<String,Long>(gfid,gfcnt*hits);
+		}, Encoders.tuple(Encoders.STRING(),Encoders.LONG()));
 		Dataset<Row> df = gift.toDF("gfid","gfamo");
 		RelationalGroupedDataset result= df.groupBy("gfid");
 		Dataset<Row> sum = result.sum("gfamo");

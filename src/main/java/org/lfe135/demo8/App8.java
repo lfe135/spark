@@ -104,7 +104,7 @@ public class App8 implements Runnable {
 						break;
 					}
 				}
-				if (a > 200) {
+				if (a > 1000) {
 					fileName = "c:\\testfiles\\" + new Date().toString().replace(" ", "").replace(":", "");
 					file = new File(fileName);
 					file.createNewFile();
