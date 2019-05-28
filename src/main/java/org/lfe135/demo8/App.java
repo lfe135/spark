@@ -36,3 +36,31 @@ public class App
         System.out.println( "Hello World!" );
     }
 }
+class Solution {
+    public int lastStoneWeight(int[] stones) {
+        for(int i=0;i<stones.length-1;i++) {
+            for(int j=0;j<stones.length-1-i;j++){
+                if(stones[j]>stones[j+1]){
+                    int t=stones[j];
+                    stones[j]=stones[j+1];
+                    stones[j+1]=t;
+                }
+            }
+        }
+        for(int i=0;i<stones.length-1;i++){
+            if(stones[i]==stones[i+1]){
+                stones[i]=0;
+                stones[i+1]=0;
+                i++;
+            }else{
+                int t=stones[i]-stones[i+1];
+                if(t>0){
+                    stones[i+1]=t;
+                }else{
+                    stones[i+1]=t*(-1);
+                }
+            }
+        }
+        return stones[stones.length-1];
+    }
+}
